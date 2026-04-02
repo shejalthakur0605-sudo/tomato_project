@@ -42,48 +42,53 @@ disease_info = {
 # Prediction Function
 # -----------------------------
 def predict_disease(filepath):
-    img = cv2.imread(filepath)
+    try:
+        img = cv2.imread(filepath)
 
-    if img is None:
-        return "Error", {}, 0, "Low", "Invalid image"
+        if img is None:
+            return "Error", {}, 0, "Low", "Invalid image"
 
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img = cv2.resize(img, (224, 224))
-    img = img / 255.0
-    img = np.expand_dims(img, axis=0)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = cv2.resize(img, (224, 224))
+        img = img / 255.0
+        img = np.expand_dims(img, axis=0)
 
-    prediction = model.predict(img)[0][0]
+        prediction = model.predict(img)[0][0]
 
-    healthy_prob = (prediction * 0.9 + 0.05) * 100
-    blight_prob = ((1 - prediction) * 0.9 + 0.05) * 100
+        healthy_prob = (prediction * 0.9 + 0.05) * 100
+        blight_prob = ((1 - prediction) * 0.9 + 0.05) * 100
 
-    probabilities = {
-        "Healthy": round(healthy_prob, 2),
-        "Early Blight": round(blight_prob, 2)
-    }
+        probabilities = {
+            "Healthy": round(healthy_prob, 2),
+            "Early Blight": round(blight_prob, 2)
+        }
 
-    if prediction >= 0.5:
-        disease = "Healthy"
-        confidence = healthy_prob
-    else:
-        disease = "Early Blight"
-        confidence = blight_prob
+        if prediction >= 0.5:
+            disease = "Healthy"
+            confidence = healthy_prob
+        else:
+            disease = "Early Blight"
+            confidence = blight_prob
 
-    confidence = min(round(confidence, 2), 95)
+        confidence = min(round(confidence, 2), 95)
 
-    if confidence < 60:
-        severity = "Low"
-    elif confidence < 85:
-        severity = "Moderate"
-    else:
-        severity = "High"
+        if confidence < 60:
+            severity = "Low"
+        elif confidence < 85:
+            severity = "Moderate"
+        else:
+            severity = "High"
 
-    if disease == "Healthy":
-        recommendation = "No disease detected."
-    else:
-        recommendation = "Apply fungicide and remove infected leaves."
+        if disease == "Healthy":
+            recommendation = "No disease detected."
+        else:
+            recommendation = "Apply fungicide and remove infected leaves."
 
-    return disease, probabilities, confidence, severity, recommendation
+        return disease, probabilities, confidence, severity, recommendation
+
+    except Exception as e:
+        print("Prediction error:", e)
+        return "Error", {}, 0, "Low", "Prediction failed"
 
 
 # -----------------------------
@@ -156,4 +161,5 @@ def about():
 # Run App
 # -----------------------------
 if __name__ == "__main__":
-    app.run(debug=True, use_reloader=False)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
