@@ -3,15 +3,9 @@ import tensorflow as tf
 import numpy as np
 import cv2
 import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-
-# -----------------------------
-# Load Model
-# -----------------------------
-print("Loading model...")
-model = tf.keras.models.load_model("tomato_disease_model.h5")
-print("Model loaded successfully!")
 
 # -----------------------------
 # Upload Folder
@@ -19,6 +13,13 @@ print("Model loaded successfully!")
 UPLOAD_FOLDER = "static/uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# -----------------------------
+# Load Model
+# -----------------------------
+print("Loading model...")
+model = tf.keras.models.load_model("tomato_disease_model.h5")
+print("Model loaded successfully!")
 
 # -----------------------------
 # Disease Information
@@ -43,27 +44,32 @@ disease_info = {
 # -----------------------------
 def predict_disease(filepath):
     try:
+        print("Reading image:", filepath)
+
         img = cv2.imread(filepath)
 
         if img is None:
+            print("Image read failed")
             return "Error", {}, 0, "Low", "Invalid image"
 
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (224, 224))
         img = img / 255.0
         img = np.expand_dims(img, axis=0)
 
-        prediction = model.predict(img)[0][0]
+        print("Running prediction...")
+        prediction = model.predict(img)
 
-        healthy_prob = (prediction * 0.9 + 0.05) * 100
-        blight_prob = ((1 - prediction) * 0.9 + 0.05) * 100
+        pred = prediction[0][0]
+
+        healthy_prob = (pred * 0.9 + 0.05) * 100
+        blight_prob = ((1 - pred) * 0.9 + 0.05) * 100
 
         probabilities = {
             "Healthy": round(healthy_prob, 2),
             "Early Blight": round(blight_prob, 2)
         }
 
-        if prediction >= 0.5:
+        if pred >= 0.5:
             disease = "Healthy"
             confidence = healthy_prob
         else:
@@ -79,10 +85,11 @@ def predict_disease(filepath):
         else:
             severity = "High"
 
-        if disease == "Healthy":
-            recommendation = "No disease detected."
-        else:
-            recommendation = "Apply fungicide and remove infected leaves."
+        recommendation = (
+            "No disease detected."
+            if disease == "Healthy"
+            else "Apply fungicide and remove infected leaves."
+        )
 
         return disease, probabilities, confidence, severity, recommendation
 
@@ -101,55 +108,37 @@ def home():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    if "image" not in request.files:
-        return "No file uploaded"
+    try:
+        if "image" not in request.files:
+            return "No file uploaded"
 
-    file = request.files["image"]
+        file = request.files["image"]
 
-    if file.filename == "":
-        return "No selected file"
+        if file.filename == "":
+            return "No selected file"
 
-    filename = file.filename
-    filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-    file.save(filepath)
+        filename = secure_filename(file.filename)
 
-    disease, probabilities, confidence, severity, recommendation = predict_disease(filepath)
-    info = disease_info.get(disease, {})
+        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        file.save(filepath)
 
-    return render_template(
-        "result.html",
-        prediction=disease,
-        confidence=confidence,
-        severity=severity,
-        probabilities=probabilities,
-        recommendation=recommendation,
-        info=info,
-        image_path="uploads/" + filename
-    )
+        disease, probabilities, confidence, severity, recommendation = predict_disease(filepath)
+        info = disease_info.get(disease, {})
 
+        return render_template(
+            "result.html",
+            prediction=disease,
+            confidence=confidence,
+            severity=severity,
+            probabilities=probabilities,
+            recommendation=recommendation,
+            info=info,
+            image_path="uploads/" + filename
+        )
 
-@app.route("/sample/<type>")
-def sample(type):
-    if type == "healthy":
-        filename = "healthy.jpg"
-    else:
-        filename = "early_blight.jpg"
-
-    filepath = os.path.join("static/images", filename)
-
-    disease, probabilities, confidence, severity, recommendation = predict_disease(filepath)
-    info = disease_info.get(disease, {})
-
-    return render_template(
-        "result.html",
-        prediction=disease,
-        confidence=confidence,
-        severity=severity,
-        probabilities=probabilities,
-        recommendation=recommendation,
-        info=info,
-        image_path="images/" + filename
-    )
+    except Exception as e:
+        print("Upload error:", e)
+        return "Server error during prediction"
 
 
 @app.route("/about")
