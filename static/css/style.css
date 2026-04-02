@@ -1,0 +1,12 @@
+body{
+background:#f4f4f4;
+font-family:Arial;
+}
+
+.navbar{
+background:#2e7d32;
+}
+
+.card{
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Prediction Result</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+.footer{
+background:#1c1c1c;
+color:white;
+padding:20px;
+margin-top:40px;
+text-align:center;
+}
+
+</style>
+
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+
+<div class="card shadow">
+
+<div class="card-header bg-success text-white text-center">
+<h2>Tomato Disease Detection Result</h2>
+</div>
+
+<div class="card-body text-center">
+
+<h4>Uploaded Leaf Image</h4>
+
+<img src="{{ url_for('static', filename=image_path) }}"
+class="img-fluid rounded"
+style="max-width:300px;">
+
+<hr>
+
+<h3>
+Prediction:
+<span class="text-danger">{{ prediction }}</span>
+</h3>
+
+<h5>Confidence: {{ confidence }}%</h5>
+
+<div class="progress mx-auto" style="width:300px;height:25px">
+
+<div id="confidenceBar"
+class="progress-bar bg-success"
+role="progressbar"
+style="width:0%">
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- Prediction Chart -->
+
+<div class="card shadow mt-4">
+
+<div class="card-body">
+
+<h4 class="text-center">Prediction Probability</h4>
+
+<canvas id="predictionChart"></canvas>
+
+</div>
+
+</div>
+
+
+<!-- Disease Info -->
+
+<div class="card mt-4 shadow">
+
+<div class="card-header bg-primary text-white">
+<h4>Disease Information</h4>
+</div>
+
+<div class="card-body">
+
+<h5>Symptoms</h5>
+<p>{{ info.symptoms }}</p>
+
+<h5>Causes</h5>
+<p>{{ info.causes }}</p>
+
+<h5>Treatment</h5>
+<p>{{ info.treatment }}</p>
+
+<h5>Prevention</h5>
+<p>{{ info.prevention }}</p>
+
+</div>
+
+</div>
+
+
+<!-- Recommendation -->
+
+<div class="card mt-4 shadow">
+
+<div class="card-header bg-warning">
+<h4>Recommended Action</h4>
+</div>
+
+<div class="card-body">
+<p>{{ recommendation }}</p>
+</div>
+
+</div>
+
+
+<div class="text-center mt-4">
+
+<a href="/" class="btn btn-success">Upload Another Image</a>
+
+<a href="/about" class="btn btn-secondary">About Project</a>
+
+</div>
+
+</div>
+
+
+<footer class="footer">
+
+<p>Tomato Leaf Disease Detection System</p>
+
+<p>Developed using Python | Flask | TensorFlow | MobileNetV2</p>
+
+</footer>
+
+
+<script>
+
+let confidence = {{ confidence }};
+
+setTimeout(function(){
+document.getElementById("confidenceBar").style.width = confidence + "%";
+},300);
+
+const ctx = document.getElementById('predictionChart');
+
+new Chart(ctx, {
+
+type:'bar',
+
+data:{
+labels:['Healthy','Early Blight'],
+
+datasets:[{
+label:'Probability (%)',
+data:[
+{{ probabilities['Healthy'] }},
+{{ probabilities['Early Blight'] }}
+]
+}]
+},
+
+options:{
+scales:{
+y:{
+beginAtZero:true,
+max:100
+}
+}
+}
+
+});
+
+</script>
+
+</body>
+</html>

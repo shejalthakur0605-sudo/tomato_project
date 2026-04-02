@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>About This Project</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Tomato AI Detector</a>
+
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link active" href="/about">About</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+
+<div class="card shadow-lg">
+<div class="card-body">
+
+<h2 class="text-success">Tomato Leaf Disease Detection System</h2>
+<hr>
+
+<p>
+This project is an Artificial Intelligence based web application designed to detect
+diseases in tomato plant leaves using deep learning. The system allows users to upload
+an image of a tomato leaf and instantly receive a prediction along with disease
+information and recommended treatment.
+</p>
+
+<!-- Objective -->
+<h4 class="mt-4">Project Objective</h4>
+
+<p>
+The objective of this system is to assist farmers and agricultural workers in identifying
+plant diseases at an early stage. Early detection helps reduce crop damage,
+increase agricultural productivity, and support smart farming practices.
+</p>
+
+<!-- Technologies -->
+<h4 class="mt-4">Technologies Used</h4>
+
+<ul>
+<li><b>Python</b> – Backend programming</li>
+<li><b>Flask</b> – Web framework</li>
+<li><b>TensorFlow / Keras</b> – Deep learning model training</li>
+<li><b>MobileNetV2</b> – Transfer learning CNN architecture</li>
+<li><b>OpenCV</b> – Image preprocessing</li>
+<li><b>Bootstrap</b> – Frontend styling</li>
+</ul>
+
+<!-- Dataset -->
+<h4 class="mt-4">Dataset</h4>
+
+<p>
+The model was trained using tomato leaf images categorized into two classes:
+<b>Healthy</b> and <b>Early Blight</b>. The dataset images were resized,
+normalized, and augmented to improve model generalization.
+</p>
+
+<!-- Model Architecture -->
+<h4 class="mt-4">Model Architecture</h4>
+
+<p>
+This project uses the <b>MobileNetV2</b> deep learning architecture,
+which is a lightweight Convolutional Neural Network optimized for image classification tasks.
+
+Transfer learning was applied using a pretrained MobileNetV2 model,
+and additional fully connected layers were added to classify tomato leaf diseases.
+</p>
+
+<ul>
+<li>Input Image Size: 224 × 224</li>
+<li>Model: MobileNetV2</li>
+<li>Optimizer: Adam</li>
+<li>Loss Function: Binary Crossentropy</li>
+<li>Framework: TensorFlow / Keras</li>
+</ul>
+
+<!-- Model Performance -->
+<h4 class="mt-4">Model Performance</h4>
+
+<p>
+The trained model achieved strong performance on the validation dataset.
+Model evaluation was performed using accuracy and loss curves.
+</p>
+
+<ul>
+<li>Training Accuracy: 95%</li>
+<li>Validation Accuracy: 93%</li>
+<li>Model Type: Binary Image Classification</li>
+</ul>
+
+<!-- Accuracy Graph -->
+<h5 class="mt-4">Training Accuracy Graph</h5>
+
+<img src="{{ url_for('static', filename='images/accuracy_graph.png') }}"
+class="img-fluid rounded shadow">
+
+<p class="mt-2">
+This graph shows the training accuracy of the MobileNetV2 model over multiple epochs.
+The accuracy increases as the model learns features from tomato leaf images,
+indicating improved classification performance during training.
+</p>
+
+<!-- Loss Graph -->
+<h5 class="mt-4">Training Loss Graph</h5>
+
+<img src="{{ url_for('static', filename='images/loss_graph.png') }}"
+class="img-fluid rounded shadow">
+
+<p class="mt-2">
+This graph represents the training loss during the model training process.
+The decreasing loss value indicates that the model is minimizing prediction errors
+and learning more accurate representations of tomato leaf diseases.
+</p>
+
+<!-- Workflow -->
+<h4 class="mt-4">System Workflow</h4>
+
+<ol>
+<li>User uploads a tomato leaf image</li>
+<li>The image is resized and normalized</li>
+<li>The trained MobileNetV2 model analyzes the image</li>
+<li>The model predicts whether the leaf is healthy or diseased</li>
+<li>The system displays prediction, confidence score, and recommendations</li>
+</ol>
+
+<!-- Applications -->
+<h4 class="mt-4">Applications</h4>
+
+<ul>
+<li>Smart agriculture systems</li>
+<li>Crop disease monitoring</li>
+<li>Agricultural research</li>
+<li>AI-based farming tools</li>
+</ul>
+
+<!-- Benefits -->
+<h4 class="mt-4">Benefits</h4>
+
+<ul>
+<li>Early detection of plant diseases</li>
+<li>Reduces manual inspection effort</li>
+<li>Provides quick diagnosis</li>
+<li>Improves crop productivity</li>
+</ul>
+
+<!-- Future Scope -->
+<h4 class="mt-4">Future Enhancements</h4>
+
+<ul>
+<li>Support for multiple tomato diseases</li>
+<li>Mobile application for farmers</li>
+<li>Real-time camera disease detection</li>
+<li>Cloud-based deployment for large scale usage</li>
+</ul>
+
+<div class="text-center mt-4">
+
+<a href="/" class="btn btn-success">
+Back to Home
+</a>
+
+</div>
+
+</div>
+</div>
+
+</div>
+
+</body>
+</html>
