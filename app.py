@@ -1,3 +1,7 @@
+import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+import tensorflow as tf
+tf.config.set_visible_devices([], 'GPU')
 from flask import Flask, render_template, request
 import tensorflow as tf
 import numpy as np
