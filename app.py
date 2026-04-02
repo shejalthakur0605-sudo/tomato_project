@@ -61,7 +61,7 @@ def predict_disease(filepath):
         img = np.expand_dims(img, axis=0)
 
         print("Running prediction...")
-        prediction = model.predict(img)
+        prediction = model(img, training=False).numpy()
 
         pred = prediction[0][0]
 
